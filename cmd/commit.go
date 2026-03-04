@@ -15,6 +15,9 @@ var commitCmd = &cobra.Command{
 	Use:   "commit",
 	Short: "Generate a commit message with AI",
 	Run: func(cmd *cobra.Command, args []string) {
+		isShort, _ := cmd.Flags().GetBool("short")
+		isLong, _ := cmd.Flags().GetBool("long")
+
 		cfg, err := config.LoadConfig()
 		if err != nil {
 			fmt.Println("Error: Could not load config:", err)
@@ -38,7 +41,14 @@ var commitCmd = &cobra.Command{
 			// Non-fatal error
 		}
 
-		aiClient, err := ai.NewClient(cfg.ApiKey, cfg.Model, cfg.Language)
+		style := cfg.Style
+		if isShort {
+			style = "short"
+		} else if isLong {
+			style = "long"
+		}
+
+		aiClient, err := ai.NewClient(cfg.ApiKey, cfg.Model, cfg.Language, style)
 		if err != nil {
 			fmt.Println("Error: Could not create AI client:", err)
 			os.Exit(1)
@@ -70,5 +80,7 @@ var commitCmd = &cobra.Command{
 }
 
 func init() {
+	commitCmd.Flags().BoolP("short", "s", false, "Generate a single-line commit message")
+	commitCmd.Flags().BoolP("long", "l", false, "Generate a detailed commit message (default)")
 	rootCmd.AddCommand(commitCmd)
 }

@@ -13,9 +13,10 @@ type Client struct {
 	genaiClient *genai.Client
 	model       string
 	language    string
+	style       string
 }
 
-func NewClient(apiKey string, model string, language string) (*Client, error) {
+func NewClient(apiKey string, model string, language string, style string) (*Client, error) {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
@@ -26,12 +27,13 @@ func NewClient(apiKey string, model string, language string) (*Client, error) {
 		genaiClient: client,
 		model:       model,
 		language:    language,
+		style:       style,
 	}, nil
 }
 
 func (c *Client) GenerateCommitMessage(diff string, logs string) (string, error) {
 	ctx := context.Background()
-	prompt := BuildPrompt(diff, logs, c.language)
+	prompt := BuildPrompt(diff, logs, c.language, c.style)
 
 	model := c.genaiClient.GenerativeModel(c.model)
 

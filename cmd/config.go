@@ -34,6 +34,12 @@ var configSetCmd = &cobra.Command{
 			cfg.Language = val
 		case "model":
 			cfg.Model = val
+		case "style":
+			if val != "short" && val != "long" {
+				fmt.Println("Error: style must be 'short' or 'long'")
+				os.Exit(1)
+			}
+			cfg.Style = val
 		default:
 			fmt.Printf("Unknown setting key: %s\n", key)
 			os.Exit(1)
@@ -61,6 +67,7 @@ var configShowCmd = &cobra.Command{
 		fmt.Printf("API Key       : %s\n", maskKey(cfg.ApiKey))
 		fmt.Printf("Language      : %s\n", cfg.Language)
 		fmt.Printf("Model         : %s\n", cfg.Model)
+		fmt.Printf("Style         : %s\n", cfg.Style)
 		fmt.Printf("Max Diff Lines: %d\n", cfg.MaxDiffLines)
 		fmt.Printf("Auto-Confirm  : %t\n", cfg.AutoConfirm)
 	},

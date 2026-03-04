@@ -37,18 +37,42 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	s := "┌─────────────────────────────────────────────────┐\n"
-
+	const maxWidth = 60
 	lines := strings.Split(m.message, "\n")
-	for _, l := range lines {
-		// Just a simple UI box
-		if len(l) > 47 {
-			s += fmt.Sprintf("│ %-47s │\n", l[:44]+"...")
+	var wrappedLines []string
+
+	for _, line := range lines {
+		if len(line) <= maxWidth {
+			wrappedLines = append(wrappedLines, line)
 		} else {
-			s += fmt.Sprintf("│ %-47s │\n", l)
+			// Simple wrapping logic
+			for len(line) > maxWidth {
+				wrappedLines = append(wrappedLines, line[:maxWidth])
+				line = line[maxWidth:]
+			}
+			wrappedLines = append(wrappedLines, line)
 		}
 	}
-	s += "└─────────────────────────────────────────────────┘\n\n"
+
+	// Dynamic width based on longest line
+	actualWidth := 0
+	for _, l := range wrappedLines {
+		if len(l) > actualWidth {
+			actualWidth = len(l)
+		}
+	}
+	if actualWidth < 40 {
+		actualWidth = 40
+	}
+
+	topBorder := "┌─" + strings.Repeat("─", actualWidth) + "─┐\n"
+	bottomBorder := "└─" + strings.Repeat("─", actualWidth) + "─┘\n\n"
+
+	s := "\n" + topBorder
+	for _, l := range wrappedLines {
+		s += fmt.Sprintf("│ %-*s │\n", actualWidth, l)
+	}
+	s += bottomBorder
 	s += "[C]ommit  [E]dit  [I]gnore  > "
 	return s
 }

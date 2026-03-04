@@ -16,6 +16,7 @@ type Config struct {
 	Model        string `toml:"model"`
 	MaxDiffLines int    `toml:"max_diff_lines"`
 	AutoConfirm  bool   `toml:"auto_confirm"`
+	Style        string `toml:"style"` // "short" or "long"
 }
 
 func getConfigDir() (string, error) {
@@ -99,6 +100,7 @@ func promptForKeyAndCreateDefault() Config {
 		Model:        "gemini-2.5-flash",
 		MaxDiffLines: 500,
 		AutoConfirm:  false,
+		Style:        "long",
 	}
 }
 

@@ -2,18 +2,23 @@ package ai
 
 import "fmt"
 
-func BuildPrompt(diff, logs, language string) string {
-	return fmt.Sprintf(`You are an expert software developer, and your task is to generate a git commit message.
-Please strictly follow these rules:
-1. Use the Conventional Commits format (feat:, fix:, chore:, refactor:, docs:, etc.).
-2. The first line (subject) must not exceed 72 characters.
-3. Leave a blank line after the subject and add a detailed description (body) in bullet points if necessary.
-4. Output ONLY the commit message. Do NOT include any introductory sentences, feedback, or markdown code blocks (***).
-5. Set the language of the commit message to '%s'.
+func BuildPrompt(diff, logs, language, style string) string {
+	styleGuide := "Include a detailed body with bullet points if necessary."
+	if style == "short" {
+		styleGuide = "Output ONLY a single line (subject). Do NOT include a body or bullet points."
+	}
 
-Recent logs of the repository for reference:
+	return fmt.Sprintf(`You are an expert software developer generating a git commit message.
+Follow Conventional Commits. Output ONLY the message.
+
+Rules:
+1. First line (subject) must be under 72 chars.
+2. %s
+3. Language: %s
+
+Context (Recent Logs):
 %s
 
-Staged changes to analyze:
-%s`, language, logs, diff)
+Changes:
+%s`, styleGuide, language, logs, diff)
 }
