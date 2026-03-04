@@ -1,5 +1,9 @@
 # cmt - AI-Powered Git Commit Message Generator
 
+![GitHub release](https://img.shields.io/github/v/release/makesikann/cmt)
+![License](https://img.shields.io/github/license/makesikann/cmt)
+![Go version](https://img.shields.io/github/go-mod/go-version/makesikann/cmt)
+
 cmt is a Go-based CLI tool that uses Google Gemini AI to accelerate the git commit process for developers. It automatically generates messages following the Conventional Commits standards by analyzing staged changes (git diff --staged) and git log history, allowing the user to review and edit them interactively.
 
 ![cmt Demo](assets/demo.gif)
