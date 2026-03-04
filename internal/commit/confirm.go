@@ -115,7 +115,7 @@ func editMessage(message string) (string, error) {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("editör çalıştırılamadı: %v", err)
+		return "", fmt.Errorf("could not run editor: %v", err)
 	}
 
 	bytes, err := os.ReadFile(tmpFile.Name())

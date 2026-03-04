@@ -19,7 +19,7 @@ func NewClient(apiKey string, model string, language string) (*Client, error) {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
-		return nil, fmt.Errorf("gemini istemcisi oluşturulamadı: %v", err)
+		return nil, fmt.Errorf("could not create gemini client: %v", err)
 	}
 
 	return &Client{
@@ -37,11 +37,11 @@ func (c *Client) GenerateCommitMessage(diff string, logs string) (string, error)
 
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
-		return "", fmt.Errorf("commit mesajı üretilemedi: %v", err)
+		return "", fmt.Errorf("could not generate commit message: %v", err)
 	}
 
 	if len(resp.Candidates) == 0 || resp.Candidates[0].Content == nil || len(resp.Candidates[0].Content.Parts) == 0 {
-		return "", fmt.Errorf("API'den geçerli içerik alınamadı")
+		return "", fmt.Errorf("could not retrieve valid content from API")
 	}
 
 	var msgBuilder strings.Builder
@@ -53,7 +53,7 @@ func (c *Client) GenerateCommitMessage(diff string, logs string) (string, error)
 
 	msg := strings.TrimSpace(msgBuilder.String())
 	if msg == "" {
-		return "", fmt.Errorf("kullanılabilir commit mesajı döndürülmedi")
+		return "", fmt.Errorf("no usable commit message returned")
 	}
 
 	// Remove markdown codeblocks if AI wraps it

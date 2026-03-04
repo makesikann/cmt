@@ -47,15 +47,15 @@ var commitCmd = &cobra.Command{
 		fmt.Println("Generating commit message with Gemini...")
 		msg, err := aiClient.GenerateCommitMessage(diff, logs)
 		if err != nil {
-			fmt.Println("Hata:", err)
+			fmt.Println("Error:", err)
 			os.Exit(1)
 		}
 
 		if cfg.AutoConfirm {
-			// Otomatik onayla
+			// Auto confirm
 			_, err = commit.PerformCommit(msg)
 			if err != nil {
-				fmt.Println("Hata:", err)
+				fmt.Println("Error:", err)
 				os.Exit(1)
 			}
 			return
@@ -63,7 +63,7 @@ var commitCmd = &cobra.Command{
 
 		_, err = commit.ConfirmMessage(msg)
 		if err != nil {
-			fmt.Println("Hata:", err)
+			fmt.Println("Error:", err)
 			os.Exit(1)
 		}
 	},

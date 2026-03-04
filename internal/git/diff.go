@@ -83,7 +83,7 @@ func truncatePerFile(lines []string) string {
 			if len(currentFileLines) > 0 {
 				result = append(result, currentFileLines...)
 				if lineCount > 100 {
-					result = append(result, fmt.Sprintf("... (%d satır kırpıldı) ...", lineCount-100))
+					result = append(result, fmt.Sprintf("... (%d lines truncated) ...", lineCount-100))
 				}
 			}
 			// Reset for new file
@@ -100,7 +100,7 @@ func truncatePerFile(lines []string) string {
 	if len(currentFileLines) > 0 {
 		result = append(result, currentFileLines...)
 		if lineCount > 100 {
-			result = append(result, fmt.Sprintf("... (%d satır kırpıldı) ...", lineCount-100))
+			result = append(result, fmt.Sprintf("... (%d lines truncated) ...", lineCount-100))
 		}
 	}
 
