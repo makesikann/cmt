@@ -1,0 +1,23 @@
+# Binaries
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+cmt
+
+# Dependency directories
+vendor/
+
+# Configuration (Test sırasında yanlışlıkla local config oluşursa)
+.config/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
