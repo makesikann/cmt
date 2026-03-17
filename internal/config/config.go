@@ -11,13 +11,17 @@ import (
 )
 
 type Config struct {
-	ApiKey       string `toml:"api_key"`
-	Provider     string `toml:"provider"`
-	Language     string `toml:"language"`
-	Model        string `toml:"model"`
-	MaxDiffLines int    `toml:"max_diff_lines"`
-	AutoConfirm  bool   `toml:"auto_confirm"`
-	Style        string `toml:"style"` // "short" or "long"
+	ApiKey           string `toml:"api_key"`            // Default/Gemini Key
+	OpenAIApiKey     string `toml:"openai_api_key"`     // OpenAI Key
+	AnthropicApiKey  string `toml:"anthropic_api_key"`  // Anthropic Key
+	GroqApiKey       string `toml:"groq_api_key"`       // Groq Key
+	OllamaEndpoint   string `toml:"ollama_endpoint"`    // Ollama Endpoint (default: http://localhost:11434)
+	Provider         string `toml:"provider"`           // "gemini", "openai", "anthropic", "ollama", "groq"
+	Language         string `toml:"language"`
+	Model            string `toml:"model"`
+	MaxDiffLines     int    `toml:"max_diff_lines"`
+	AutoConfirm      bool   `toml:"auto_confirm"`
+	Style            string `toml:"style"` // "short" or "long"
 }
 
 func getConfigDir() (string, error) {
@@ -57,12 +61,21 @@ func LoadConfig() (*Config, error) {
 		return nil, err
 	}
 
-	// Check if API key is empty
-	if cfg.ApiKey == "" {
-		cfg.ApiKey = promptForAPIKey()
-		if err := SaveConfig(&cfg); err != nil {
-			return nil, err
+	// Check if key for current provider is empty
+	if cfg.Provider == "" || cfg.Provider == "gemini" {
+		if cfg.ApiKey == "" {
+			cfg.ApiKey = promptForAPIKey("Gemini")
+			SaveConfig(&cfg)
 		}
+	} else if cfg.Provider == "openai" && cfg.OpenAIApiKey == "" {
+		cfg.OpenAIApiKey = promptForAPIKey("OpenAI")
+		SaveConfig(&cfg)
+	} else if cfg.Provider == "anthropic" && cfg.AnthropicApiKey == "" {
+		cfg.AnthropicApiKey = promptForAPIKey("Anthropic")
+		SaveConfig(&cfg)
+	} else if cfg.Provider == "groq" && cfg.GroqApiKey == "" {
+		cfg.GroqApiKey = promptForAPIKey("Groq")
+		SaveConfig(&cfg)
 	}
 
 	return &cfg, nil
@@ -94,7 +107,7 @@ func SaveConfig(cfg *Config) error {
 }
 
 func promptForKeyAndCreateDefault() Config {
-	apiKey := promptForAPIKey()
+	apiKey := promptForAPIKey("Gemini")
 	return Config{
 		ApiKey:       apiKey,
 		Provider:     "gemini",
@@ -106,8 +119,8 @@ func promptForKeyAndCreateDefault() Config {
 	}
 }
 
-func promptForAPIKey() string {
-	fmt.Println("Gemini API key not found.")
+func promptForAPIKey(provider string) string {
+	fmt.Printf("%s API key not found.\n", provider)
 	fmt.Print("Enter your key: ")
 	reader := bufio.NewReader(os.Stdin)
 	key, _ := reader.ReadString('\n')

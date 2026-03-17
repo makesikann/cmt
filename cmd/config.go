@@ -28,8 +28,30 @@ var configSetCmd = &cobra.Command{
 		val := args[1]
 
 		switch key {
+		case "provider":
+			validProviders := []string{"gemini", "openai", "anthropic", "ollama", "groq"}
+			isValid := false
+			for _, p := range validProviders {
+				if val == p {
+					isValid = true
+					break
+				}
+			}
+			if !isValid {
+				fmt.Printf("Error: invalid provider '%s'. Valid options: %v\n", val, validProviders)
+				os.Exit(1)
+			}
+			cfg.Provider = val
 		case "api-key", "api_key":
 			cfg.ApiKey = val
+		case "openai-api-key", "openai_api_key":
+			cfg.OpenAIApiKey = val
+		case "anthropic-api-key", "anthropic_api_key":
+			cfg.AnthropicApiKey = val
+		case "groq-api-key", "groq_api_key":
+			cfg.GroqApiKey = val
+		case "ollama-endpoint", "ollama_endpoint":
+			cfg.OllamaEndpoint = val
 		case "language":
 			cfg.Language = val
 		case "model":
@@ -64,12 +86,18 @@ var configShowCmd = &cobra.Command{
 		}
 
 		fmt.Println("--- cmt Configuration ---")
-		fmt.Printf("API Key       : %s\n", maskKey(cfg.ApiKey))
-		fmt.Printf("Language      : %s\n", cfg.Language)
-		fmt.Printf("Model         : %s\n", cfg.Model)
-		fmt.Printf("Style         : %s\n", cfg.Style)
-		fmt.Printf("Max Diff Lines: %d\n", cfg.MaxDiffLines)
-		fmt.Printf("Auto-Confirm  : %t\n", cfg.AutoConfirm)
+		fmt.Printf("Current Provider: %s\n", cfg.Provider)
+		fmt.Printf("Language        : %s\n", cfg.Language)
+		fmt.Printf("Model           : %s\n", cfg.Model)
+		fmt.Printf("Style           : %s\n", cfg.Style)
+		fmt.Printf("Max Diff Lines  : %d\n", cfg.MaxDiffLines)
+		fmt.Printf("Auto-Confirm    : %t\n", cfg.AutoConfirm)
+		fmt.Println("\n--- API Keys & Endpoints ---")
+		fmt.Printf("Gemini Key      : %s\n", maskKey(cfg.ApiKey))
+		fmt.Printf("OpenAI Key      : %s\n", maskKey(cfg.OpenAIApiKey))
+		fmt.Printf("Anthropic Key   : %s\n", maskKey(cfg.AnthropicApiKey))
+		fmt.Printf("Groq Key        : %s\n", maskKey(cfg.GroqApiKey))
+		fmt.Printf("Ollama Endpoint : %s\n", cfg.OllamaEndpoint)
 	},
 }
 

@@ -54,8 +54,20 @@ var commitCmd = &cobra.Command{
 		switch cfg.Provider {
 		case "gemini":
 			aiProvider, err = ai.NewGeminiProvider(cfg.ApiKey, cfg.Model, cfg.Language, style)
+		case "openai":
+			aiProvider = ai.NewOpenAIProvider(cfg.OpenAIApiKey, cfg.Model, cfg.Language, style, "")
+		case "anthropic":
+			aiProvider = ai.NewAnthropicProvider(cfg.AnthropicApiKey, cfg.Model, cfg.Language, style)
+		case "groq":
+			aiProvider = ai.NewOpenAIProvider(cfg.GroqApiKey, cfg.Model, cfg.Language, style, "https://api.groq.com/openai/v1")
+		case "ollama":
+			endpoint := cfg.OllamaEndpoint
+			if endpoint == "" {
+				endpoint = "http://localhost:11434/v1"
+			}
+			aiProvider = ai.NewOpenAIProvider("ollama", cfg.Model, cfg.Language, style, endpoint)
 		default:
-			// Default to gemini for backward compatibility if provider is not set
+			// Fallback to gemini if provider unknown or not specified
 			aiProvider, err = ai.NewGeminiProvider(cfg.ApiKey, cfg.Model, cfg.Language, style)
 		}
 

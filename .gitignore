@@ -17,6 +17,7 @@ vendor/
 .idea/
 .vscode/
 *.swp
+.agent
 
 # OS generated files
 .DS_Store
