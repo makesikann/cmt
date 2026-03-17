@@ -12,6 +12,7 @@ import (
 
 type Config struct {
 	ApiKey       string `toml:"api_key"`
+	Provider     string `toml:"provider"`
 	Language     string `toml:"language"`
 	Model        string `toml:"model"`
 	MaxDiffLines int    `toml:"max_diff_lines"`
@@ -96,6 +97,7 @@ func promptForKeyAndCreateDefault() Config {
 	apiKey := promptForAPIKey()
 	return Config{
 		ApiKey:       apiKey,
+		Provider:     "gemini",
 		Language:     "en",
 		Model:        "gemini-2.5-flash",
 		MaxDiffLines: 500,

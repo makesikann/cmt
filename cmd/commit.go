@@ -48,14 +48,24 @@ var commitCmd = &cobra.Command{
 			style = "long"
 		}
 
-		aiClient, err := ai.NewClient(cfg.ApiKey, cfg.Model, cfg.Language, style)
+		var aiProvider ai.Provider
+		// err is already declared above
+
+		switch cfg.Provider {
+		case "gemini":
+			aiProvider, err = ai.NewGeminiProvider(cfg.ApiKey, cfg.Model, cfg.Language, style)
+		default:
+			// Default to gemini for backward compatibility if provider is not set
+			aiProvider, err = ai.NewGeminiProvider(cfg.ApiKey, cfg.Model, cfg.Language, style)
+		}
+
 		if err != nil {
-			fmt.Println("Error: Could not create AI client:", err)
+			fmt.Println("Error: Could not create AI provider:", err)
 			os.Exit(1)
 		}
 
-		fmt.Println("Generating commit message with Gemini...")
-		msg, err := aiClient.GenerateCommitMessage(diff, logs)
+		fmt.Printf("Generating commit message with %s...\n", cfg.Provider)
+		msg, err := aiProvider.GenerateCommitMessage(diff, logs)
 		if err != nil {
 			fmt.Println("Error:", err)
 			os.Exit(1)

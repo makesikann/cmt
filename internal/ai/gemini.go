@@ -9,21 +9,21 @@ import (
 	"google.golang.org/api/option"
 )
 
-type Client struct {
+type GeminiProvider struct {
 	genaiClient *genai.Client
 	model       string
 	language    string
 	style       string
 }
 
-func NewClient(apiKey string, model string, language string, style string) (*Client, error) {
+func NewGeminiProvider(apiKey string, model string, language string, style string) (*GeminiProvider, error) {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 	if err != nil {
 		return nil, fmt.Errorf("could not create gemini client: %v", err)
 	}
 
-	return &Client{
+	return &GeminiProvider{
 		genaiClient: client,
 		model:       model,
 		language:    language,
@@ -31,11 +31,11 @@ func NewClient(apiKey string, model string, language string, style string) (*Cli
 	}, nil
 }
 
-func (c *Client) GenerateCommitMessage(diff string, logs string) (string, error) {
+func (p *GeminiProvider) GenerateCommitMessage(diff string, logs string) (string, error) {
 	ctx := context.Background()
-	prompt := BuildPrompt(diff, logs, c.language, c.style)
+	prompt := BuildPrompt(diff, logs, p.language, p.style)
 
-	model := c.genaiClient.GenerativeModel(c.model)
+	model := p.genaiClient.GenerativeModel(p.model)
 
 	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
 	if err != nil {
